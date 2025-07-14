@@ -344,8 +344,7 @@ func GetProduct(c *gin.Context) {
 
 func GetCategories(c *gin.Context) {
 	var categories []Category
-	config.DbClient.Preload("Image").Find(&categories)
-
+	config.DbClient.Find(&categories)
 
 	c.JSON(200, &DefaultResponse{
 		Type:    true,
@@ -383,7 +382,6 @@ func GetProductsByCategory(c *gin.Context) {
 
 func GetImage(c *gin.Context) {
 	imageID := c.Param("id")
-	
 
 	var image Image
 	if err := config.DbClient.
