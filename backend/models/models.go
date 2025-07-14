@@ -69,7 +69,7 @@ type Category struct {
 	ID      uint `gorm:"primaryKey;autoIncrement"`
 	Name    string
 	ImageID *uint
-	Image   *Image `gorm:"foreignKey:ImageID"`
+	// Image   *Image `gorm:"foreignKey:ImageID"`
 }
 
 // Order Сущность заказа

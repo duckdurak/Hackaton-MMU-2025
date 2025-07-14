@@ -76,8 +76,15 @@ func InitDB() {
 		panic("Не удалось подключиться к базе данных: " + err.Error())
 	}
 
-	DbClient.AutoMigrate(&models.User{}, &models.Address{}, &models.Order{}, &models.ProductOrder{},
-		&models.Product{}, &models.Category{}, &models.Tracking{}, &models.Comment{}, &models.Image{})
+	DbClient.AutoMigrate(&models.Category{})
+	DbClient.AutoMigrate(&models.Address{})
+	DbClient.AutoMigrate(&models.Tracking{})
+	DbClient.AutoMigrate(&models.User{})
+	DbClient.AutoMigrate(&models.Order{})
+	DbClient.AutoMigrate(&models.Comment{})
+	DbClient.AutoMigrate(&models.ProductOrder{})
+	DbClient.AutoMigrate(&models.Image{})
+	DbClient.AutoMigrate(&models.Product{})
 }
 
 func InitRedis() {
