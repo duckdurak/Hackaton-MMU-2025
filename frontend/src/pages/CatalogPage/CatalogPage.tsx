@@ -64,7 +64,7 @@ const CatalogPage = () => {
 							<ProductImage>
 								{Product.Images[0] && (
 									<img
-										src={`${API_ENDPOINT}/api/image/${Product.Images[0].ID}`}
+										src={`${API_ENDPOINT}/api/image/${Product.Category.ImageID}`}
 										style={{
 											width: "100%",
 											height: "100%",
