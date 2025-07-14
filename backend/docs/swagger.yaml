@@ -1,0 +1,729 @@
+definitions:
+  auth.LoginDto:
+    properties:
+      email:
+        description: Email пользователя
+        example: user@example.com
+        type: string
+      password:
+        description: Password пользователя
+        example: qwerty1234
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  auth.RegisterDto:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - password
+    type: object
+  models.Address:
+    description: Описание сущности адреса
+    properties:
+      fullAddress:
+        description: FullAddress указывает на полный адрес пользователя
+        type: string
+      id:
+        description: ID указывает на уникальный идентфиикатор адреса
+        type: integer
+      userID:
+        description: UserID указывает на айди пользователя этого адреса
+        type: integer
+    type: object
+  models.Category:
+    description: Описание сущности категории товара
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.Comment:
+    description: Описание сущности коментария заказа
+    properties:
+      content:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      order:
+        $ref: '#/definitions/models.Order'
+      orderID:
+        type: integer
+      rate:
+        type: integer
+      user:
+        $ref: '#/definitions/models.User'
+      userID:
+        type: integer
+    type: object
+  models.Image:
+    description: Описание сущности загруженных фотографий
+    properties:
+      fullPath:
+        type: string
+      id:
+        type: integer
+      productID:
+        type: integer
+      userID:
+        type: integer
+    type: object
+  models.Order:
+    description: Описание сущности заказа
+    properties:
+      buyer:
+        $ref: '#/definitions/models.User'
+      buyer_id:
+        type: integer
+      comments:
+        items:
+          $ref: '#/definitions/models.Comment'
+        type: array
+      createdAt:
+        type: string
+      finished:
+        type: boolean
+      id:
+        type: integer
+      trackings:
+        items:
+          $ref: '#/definitions/models.Tracking'
+        type: array
+    type: object
+  models.Product:
+    description: Описание сущности товара
+    properties:
+      category:
+        $ref: '#/definitions/models.Category'
+      categoryID:
+        type: integer
+      createdAt:
+        type: string
+      description:
+        type: string
+      disabled:
+        type: boolean
+      id:
+        type: integer
+      images:
+        items:
+          $ref: '#/definitions/models.Image'
+        type: array
+      name:
+        type: string
+      price:
+        type: integer
+      updatedAt:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      userID:
+        type: integer
+    type: object
+  models.Tracking:
+    description: Описание сущности трекинга статуса заказа
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      orderID:
+        type: integer
+      status:
+        type: string
+    type: object
+  models.User:
+    description: Описание сущности пользователя
+    properties:
+      addresses:
+        description: Addresses указывает на существующие адреса пользователя
+        items:
+          $ref: '#/definitions/models.Address'
+        type: array
+      avatar:
+        allOf:
+        - $ref: '#/definitions/models.Image'
+        description: Avatar указывает на сущность Image
+      avatarID:
+        description: AvatarID указывает на уникальные идентификаторы на сущности Image
+        type: integer
+      comments:
+        description: Comments указывает массив сущностей Comment
+        items:
+          $ref: '#/definitions/models.Comment'
+        type: array
+      discount:
+        description: Discount указывает на текущий уровень скидки
+        type: integer
+      email:
+        description: Email указывает на почту пользователя
+        type: string
+      firstName:
+        description: FirstName указывает на имя пользователя
+        type: string
+      id:
+        description: ID указывает на уникальный идентфиикатор пользователя
+        type: integer
+      lastName:
+        description: LastName указывает на фамилию пользователя
+        type: string
+      password:
+        description: Password указывает на пароль пользователя
+        type: string
+      role:
+        description: Role указывает на роль пользователя (1 - пользователь, 2 - администратор)
+        type: integer
+      telegramID:
+        description: TelegramID указывает на уникальный идентификатор пользователя
+          в телеграмме
+        type: integer
+      verified:
+        description: Verified указывает на подтверждение профиля пользователя
+        type: boolean
+    type: object
+  profile.AddressDto:
+    properties:
+      fulladdress:
+        description: FullAddress Пользователя
+        type: string
+    required:
+    - fulladdress
+    type: object
+  profile.DeleteAddressDto:
+    properties:
+      id:
+        description: ID Адреса
+        type: integer
+    required:
+    - id
+    type: object
+  profile.ForgotPasswordDto:
+    properties:
+      email:
+        description: Email пользователя
+        example: user@example.com
+        type: string
+    required:
+    - email
+    type: object
+  profile.ResetPasswordDto:
+    properties:
+      new_password:
+        description: NewPassword пользователя
+        minLength: 6
+        type: string
+      token:
+        description: Token с Query['token'] параметра
+        type: string
+    required:
+    - new_password
+    - token
+    type: object
+  types.DefaultResponse:
+    properties:
+      error:
+        type: string
+      message: {}
+      type:
+        type: boolean
+    type: object
+  types.SuccessAuthResponse:
+    description: Возвращает JWT-токен и данные пользователя
+    properties:
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: Документация для API цветочного магазина на Golang + Gin
+  title: Flower Shop
+  version: "1.0"
+paths:
+  /api/auth:
+    get:
+      description: Возвращает данные аутентифицированного пользователя и его токен
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный ответ
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.DefaultResponse'
+            - properties:
+                message:
+                  $ref: '#/definitions/types.SuccessAuthResponse'
+              type: object
+        "401":
+          description: Токен невалиден или отсутствует
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+      summary: Получить данные текущего пользователя
+      tags:
+      - Авторизация
+  /api/auth/forgot:
+    post:
+      consumes:
+      - application/json
+      description: Отправка токена на почту для восстановления доступа на почту
+      parameters:
+      - description: Почта пользователя
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/profile.ForgotPasswordDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Письмо отправлено!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "400":
+          description: Ошибка сервера!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "500":
+          description: Не удалось отправить отправить письмо!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+      summary: Отправка токена на почту
+      tags:
+      - Авторизация
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Вход в систему по email и паролю
+      parameters:
+      - description: Данные для входа
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешная авторизация
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.DefaultResponse'
+            - properties:
+                message:
+                  $ref: '#/definitions/types.SuccessAuthResponse'
+              type: object
+        "400":
+          description: Заполните форму полностью!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "403":
+          description: Пользователь с такой почтой уже существует!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "500":
+          description: Ошибка сохранения токена!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+      summary: Авторизировать пользователя
+      tags:
+      - Авторизация
+  /api/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация в системе по email и паролю
+      parameters:
+      - description: Данные для регистрации
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RegisterDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Регистрация успешна. Проверьте почту для подтверждения.
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "400":
+          description: Заполните форму полностью!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "403":
+          description: Пользователь с такой почтой уже существует!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "500":
+          description: Ошибка сохранения токена!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+      summary: Зарегистрировать пользователя
+      tags:
+      - Авторизация
+  /api/auth/reset:
+    post:
+      consumes:
+      - application/json
+      description: Сброс пароля с действуюшим токеном
+      parameters:
+      - description: Почта пользователя
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/profile.ResetPasswordDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Письмо отправлено!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "400":
+          description: Недействительный или истёкший токен!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "404":
+          description: Пользователь не найден!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+      summary: Сброс пароля
+      tags:
+      - Авторизация
+  /api/product:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление товара по ID
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Форма удаления товара
+        in: body
+        name: Форма
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Товар успешно удален!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "400":
+          description: Заполните форму полностью!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "403":
+          description: Вы не являетесь владельцем этого товара!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "404":
+          description: Товар не найден!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "500":
+          description: Не удалось удалить папку с изображениями!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+      summary: Удаление товара
+      tags:
+      - Товары
+    post:
+      consumes:
+      - multipart/form-data
+      description: Создать товар с указанными фотографиями и категорией
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Название товара
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Описание товара
+        in: formData
+        name: description
+        type: string
+      - description: ID категории
+        in: formData
+        name: category
+        required: true
+        type: integer
+      - description: Цена товара
+        in: formData
+        name: price
+        required: true
+        type: number
+      - description: Изображения товара
+        in: formData
+        name: images
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Товар успешно создан
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.DefaultResponse'
+            - properties:
+                message:
+                  $ref: '#/definitions/models.Product'
+              type: object
+        "400":
+          description: Невалидные данные
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "404":
+          description: Категория не найдена!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "500":
+          description: Ошибка при сохранении файлов
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+      summary: Создать товар
+      tags:
+      - Товары
+  /api/profile/:id:
+    get:
+      consumes:
+      - application/json
+      description: Поиск пользователя по ID
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.DefaultResponse'
+            - properties:
+                Message:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "404":
+          description: Пользователь не найден!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+      summary: Поиск пользователя
+      tags:
+      - Профиль
+  /api/profile/address:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление адреса доставки
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: ID адреса
+        in: body
+        name: Форма
+        required: true
+        schema:
+          $ref: '#/definitions/profile.DeleteAddressDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Адрес был успешно удален!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "400":
+          description: Заполните форму полностью!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "404":
+          description: Адрес не найден!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+      summary: Удаление адреса
+      tags:
+      - Профиль
+    post:
+      consumes:
+      - application/json
+      description: Добавление адреса доставки
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Полный адрес пользователя
+        in: body
+        name: Форма
+        required: true
+        schema:
+          $ref: '#/definitions/profile.AddressDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Адрес был успешно добавлен!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "400":
+          description: Заполните форму полностью!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "403":
+          description: Вы не можете добавить больше 10 адресов!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+      summary: Добавление адреса
+      tags:
+      - Профиль
+  /api/profile/addresses:
+    get:
+      consumes:
+      - application/json
+      description: Получить список адресов текущего пользвоателя
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.DefaultResponse'
+            - properties:
+                Message:
+                  items:
+                    $ref: '#/definitions/models.Address'
+                  type: array
+              type: object
+      summary: Получить список адресов
+      tags:
+      - Профиль
+  /api/profile/avatar:
+    delete:
+      consumes:
+      - application/json
+      description: Удаление аватарки текущего пользователя
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Аватарка успешно удалена!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "403":
+          description: Аватарка не установлена
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "404":
+          description: Не удалось найти запись аватарки
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+      summary: Удаление аватарки
+      tags:
+      - Профиль
+    post:
+      consumes:
+      - application/json
+      description: Загрузка аватарки пользователя
+      parameters:
+      - description: Bearer {token}
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Файл аватара
+        in: formData
+        name: Форма
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/types.DefaultResponse'
+            - properties:
+                Message:
+                  $ref: '#/definitions/models.Image'
+              type: object
+        "400":
+          description: Загрузите фото!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "404":
+          description: Адрес не найден!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+        "500":
+          description: Не удалось сохранить аватарку!
+          schema:
+            $ref: '#/definitions/types.DefaultResponse'
+      summary: Загрузка аватарки
+      tags:
+      - Профиль
+swagger: "2.0"

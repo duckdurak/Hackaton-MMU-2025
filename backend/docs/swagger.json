@@ -1,0 +1,1112 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Документация для API цветочного магазина на Golang + Gin",
+        "title": "Flower Shop",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:3000",
+    "paths": {
+        "/api/auth": {
+            "get": {
+                "description": "Возвращает данные аутентифицированного пользователя и его токен",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Получить данные текущего пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.DefaultResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "$ref": "#/definitions/types.SuccessAuthResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Токен невалиден или отсутствует",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/forgot": {
+            "post": {
+                "description": "Отправка токена на почту для восстановления доступа на почту",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Отправка токена на почту",
+                "parameters": [
+                    {
+                        "description": "Почта пользователя",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/profile.ForgotPasswordDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Письмо отправлено!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка сервера!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Не удалось отправить отправить письмо!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "description": "Вход в систему по email и паролю",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Авторизировать пользователя",
+                "parameters": [
+                    {
+                        "description": "Данные для входа",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешная авторизация",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.DefaultResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "$ref": "#/definitions/types.SuccessAuthResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Заполните форму полностью!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Пользователь с такой почтой уже существует!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сохранения токена!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "description": "Регистрация в системе по email и паролю",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Зарегистрировать пользователя",
+                "parameters": [
+                    {
+                        "description": "Данные для регистрации",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.RegisterDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Регистрация успешна. Проверьте почту для подтверждения.",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Заполните форму полностью!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Пользователь с такой почтой уже существует!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сохранения токена!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/reset": {
+            "post": {
+                "description": "Сброс пароля с действуюшим токеном",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Сброс пароля",
+                "parameters": [
+                    {
+                        "description": "Почта пользователя",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/profile.ResetPasswordDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Письмо отправлено!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Недействительный или истёкший токен!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Пользователь не найден!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/product": {
+            "post": {
+                "description": "Создать товар с указанными фотографиями и категорией",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Товары"
+                ],
+                "summary": "Создать товар",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Название товара",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Описание товара",
+                        "name": "description",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID категории",
+                        "name": "category",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Цена товара",
+                        "name": "price",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Изображения товара",
+                        "name": "images",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Товар успешно создан",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.DefaultResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "$ref": "#/definitions/models.Product"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидные данные",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Категория не найдена!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка при сохранении файлов",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаление товара по ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Товары"
+                ],
+                "summary": "Удаление товара",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Форма удаления товара",
+                        "name": "Форма",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Товар успешно удален!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Заполните форму полностью!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Вы не являетесь владельцем этого товара!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Товар не найден!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Не удалось удалить папку с изображениями!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/profile/:id": {
+            "get": {
+                "description": "Поиск пользователя по ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Профиль"
+                ],
+                "summary": "Поиск пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "ID пользователя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.DefaultResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Message": {
+                                            "$ref": "#/definitions/models.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "Пользователь не найден!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/profile/address": {
+            "post": {
+                "description": "Добавление адреса доставки",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Профиль"
+                ],
+                "summary": "Добавление адреса",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Полный адрес пользователя",
+                        "name": "Форма",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/profile.AddressDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Адрес был успешно добавлен!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Заполните форму полностью!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Вы не можете добавить больше 10 адресов!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаление адреса доставки",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Профиль"
+                ],
+                "summary": "Удаление адреса",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "ID адреса",
+                        "name": "Форма",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/profile.DeleteAddressDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Адрес был успешно удален!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Заполните форму полностью!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Адрес не найден!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/profile/addresses": {
+            "get": {
+                "description": "Получить список адресов текущего пользвоателя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Профиль"
+                ],
+                "summary": "Получить список адресов",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.DefaultResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Message": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/models.Address"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/profile/avatar": {
+            "post": {
+                "description": "Загрузка аватарки пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Профиль"
+                ],
+                "summary": "Загрузка аватарки",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Файл аватара",
+                        "name": "Форма",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/types.DefaultResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "Message": {
+                                            "$ref": "#/definitions/models.Image"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Загрузите фото!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Адрес не найден!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Не удалось сохранить аватарку!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаление аватарки текущего пользователя",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Профиль"
+                ],
+                "summary": "Удаление аватарки",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer {token}",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Аватарка успешно удалена!",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Аватарка не установлена",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Не удалось найти запись аватарки",
+                        "schema": {
+                            "$ref": "#/definitions/types.DefaultResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "auth.LoginDto": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "description": "Email пользователя",
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "password": {
+                    "description": "Password пользователя",
+                    "type": "string",
+                    "example": "qwerty1234"
+                }
+            }
+        },
+        "auth.RegisterDto": {
+            "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "last_name",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                }
+            }
+        },
+        "models.Address": {
+            "description": "Описание сущности адреса",
+            "type": "object",
+            "properties": {
+                "fullAddress": {
+                    "description": "FullAddress указывает на полный адрес пользователя",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID указывает на уникальный идентфиикатор адреса",
+                    "type": "integer"
+                },
+                "userID": {
+                    "description": "UserID указывает на айди пользователя этого адреса",
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Category": {
+            "description": "Описание сущности категории товара",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Comment": {
+            "description": "Описание сущности коментария заказа",
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "order": {
+                    "$ref": "#/definitions/models.Order"
+                },
+                "orderID": {
+                    "type": "integer"
+                },
+                "rate": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Image": {
+            "description": "Описание сущности загруженных фотографий",
+            "type": "object",
+            "properties": {
+                "fullPath": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "productID": {
+                    "type": "integer"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Order": {
+            "description": "Описание сущности заказа",
+            "type": "object",
+            "properties": {
+                "buyer": {
+                    "$ref": "#/definitions/models.User"
+                },
+                "buyer_id": {
+                    "type": "integer"
+                },
+                "comments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Comment"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "finished": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "trackings": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Tracking"
+                    }
+                }
+            }
+        },
+        "models.Product": {
+            "description": "Описание сущности товара",
+            "type": "object",
+            "properties": {
+                "category": {
+                    "$ref": "#/definitions/models.Category"
+                },
+                "categoryID": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "disabled": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Image"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                },
+                "userID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Tracking": {
+            "description": "Описание сущности трекинга статуса заказа",
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "orderID": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
+            "description": "Описание сущности пользователя",
+            "type": "object",
+            "properties": {
+                "addresses": {
+                    "description": "Addresses указывает на существующие адреса пользователя",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Address"
+                    }
+                },
+                "avatar": {
+                    "description": "Avatar указывает на сущность Image",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/models.Image"
+                        }
+                    ]
+                },
+                "avatarID": {
+                    "description": "AvatarID указывает на уникальные идентификаторы на сущности Image",
+                    "type": "integer"
+                },
+                "comments": {
+                    "description": "Comments указывает массив сущностей Comment",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Comment"
+                    }
+                },
+                "discount": {
+                    "description": "Discount указывает на текущий уровень скидки",
+                    "type": "integer"
+                },
+                "email": {
+                    "description": "Email указывает на почту пользователя",
+                    "type": "string"
+                },
+                "firstName": {
+                    "description": "FirstName указывает на имя пользователя",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID указывает на уникальный идентфиикатор пользователя",
+                    "type": "integer"
+                },
+                "lastName": {
+                    "description": "LastName указывает на фамилию пользователя",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Password указывает на пароль пользователя",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "Role указывает на роль пользователя (1 - пользователь, 2 - администратор)",
+                    "type": "integer"
+                },
+                "telegramID": {
+                    "description": "TelegramID указывает на уникальный идентификатор пользователя в телеграмме",
+                    "type": "integer"
+                },
+                "verified": {
+                    "description": "Verified указывает на подтверждение профиля пользователя",
+                    "type": "boolean"
+                }
+            }
+        },
+        "profile.AddressDto": {
+            "type": "object",
+            "required": [
+                "fulladdress"
+            ],
+            "properties": {
+                "fulladdress": {
+                    "description": "FullAddress Пользователя",
+                    "type": "string"
+                }
+            }
+        },
+        "profile.DeleteAddressDto": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "description": "ID Адреса",
+                    "type": "integer"
+                }
+            }
+        },
+        "profile.ForgotPasswordDto": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "description": "Email пользователя",
+                    "type": "string",
+                    "example": "user@example.com"
+                }
+            }
+        },
+        "profile.ResetPasswordDto": {
+            "type": "object",
+            "required": [
+                "new_password",
+                "token"
+            ],
+            "properties": {
+                "new_password": {
+                    "description": "NewPassword пользователя",
+                    "type": "string",
+                    "minLength": 6
+                },
+                "token": {
+                    "description": "Token с Query['token'] параметра",
+                    "type": "string"
+                }
+            }
+        },
+        "types.DefaultResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                },
+                "message": {},
+                "type": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "types.SuccessAuthResponse": {
+            "description": "Возвращает JWT-токен и данные пользователя",
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        }
+    }
+}

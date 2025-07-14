@@ -1,0 +1,88 @@
+services:
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    networks:
+      - local
+  postgres:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: flowers
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - local
+  pgadmin4:
+    image: elestio/pgadmin:latest
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: harduser@mail.ru
+      PGADMIN_DEFAULT_PASSWORD: hardpass123
+      PGADMIN_LISTEN_PORT: 8080
+    ports:
+      - "8080:8080"
+    networks:
+      - local
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=postgres
+      - DB_USER=admin
+      - DB_PASSWORD=admin
+      - DB_NAME=flowers
+      - DB_PORT=5432
+      - REDIS_ADDR=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET_KEY=admin
+      - TELEGRAM_BOT_TOKEN=TOKEN
+      - MAIL_HOST=smtp.mail.ru
+      - MAIL_PORT=465
+      - MAIL_USER=admin@mail.ru
+      - MAIL_PASSWORD=admin
+      - LISTEN_PORT=3000
+    networks:
+      - local
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - local
+  bot:
+    build:
+      context: ./bot
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      - DB_TYPE=postgres
+      - DB_HOST=postgres
+      - DB_USER=admin
+      - DB_PASSWORD=admin
+      - DB_NAME=flowers
+      - DB_PORT=5432
+      - TELEGRAM_BOT_TOKEN=TOKEN
+    networks:
+      - local
+
+networks:
+  local:
+    driver: bridge
